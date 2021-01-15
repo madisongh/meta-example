@@ -10,12 +10,8 @@ SRC_URI = "git://${KERNEL_REPO};name=machine;branch=${KBRANCH} \
            ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'file://systemd.cfg', '', d)} \
 "
 
-do_patch_prepend() {
-    oldwd=$PWD
-    cd ${S}/scripts
+do_rt_preempt_patch() {
     ./rt-patch.sh apply-patches
-    cd ${S}
-    git add . && git commit -m 'Apply PREEMPT_RT patches'
-    cd $oldwd
 }
-
+do_rt_preempt_patch[dirs] = "${S}/scripts"
+addtask rt_preempt_patch after do_validate_branches before do_kernel_metadata
